@@ -6,6 +6,10 @@ import mk.ukim.finki.finance.user.Role;
 import mk.ukim.finki.finance.user.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,13 +39,18 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request){
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+       Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getEmail(),
                 request.getPassword()
         ));
+
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jtwService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
+    }
+
+    public User getCurrentUser(){
+        return userRepository.findByEmail("test@mail.com").orElseThrow();
     }
 
 }
