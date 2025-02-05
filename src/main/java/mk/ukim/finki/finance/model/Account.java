@@ -42,6 +42,7 @@ public class Account {
     public Account(String name, BigDecimal balance) {
         this.name = name;
         this.balance = balance;
+        this.createdAt = LocalDateTime.now();
     }
 
 }
