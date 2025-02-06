@@ -26,6 +26,9 @@ public class Account {
     private String name;
     private BigDecimal balance;
 
+    @Enumerated(EnumType.STRING)
+    private AccountType type;
+
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -39,9 +42,10 @@ public class Account {
     @JsonManagedReference
     private List<Transaction> transactions;
 
-    public Account(String name, BigDecimal balance) {
+    public Account(String name, BigDecimal balance, AccountType type) {
         this.name = name;
         this.balance = balance;
+        this.type = type;
         this.createdAt = LocalDateTime.now();
     }
 

@@ -40,6 +40,7 @@ public class AccountServiceImpl implements AccountService {
         Account account = new Account();
         account.setName(accountDto.getName());
         account.setBalance(accountDto.getBalance());
+        account.setType(accountDto.getType());
         account.setUser(user);
         return Optional.of(this.accountRepository.save(account));
     }
