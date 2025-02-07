@@ -71,6 +71,12 @@ public class AuthenticationController {
                 }).orElseThrow(() ->new RuntimeException("Refresh Token is not in DB..!!"));
     }
 
+    @PostMapping("logout")
+    public ResponseEntity<String> logout(@RequestBody RefreshTokenRequestDto request){
+        this.refreshTokenService.invalidateRefreshToken(request.getToken());
+        return ResponseEntity.ok("Refresh Token successfully deleted. Logged out successfully...");
+    }
+
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal User user){
         return ResponseEntity.ok(user);

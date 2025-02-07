@@ -2,6 +2,7 @@ package mk.ukim.finki.finance.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import mk.ukim.finki.finance.user.User;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
 
     @Id
@@ -47,4 +49,13 @@ public class Transaction {
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    public Transaction(String name, String description, BigDecimal amount, TransactionType type) {
+        this.name = name;
+        this.description = description;
+        this.amount = amount;
+        this.type = type;
+        this.createdAt = LocalDateTime.now();
+        this.transactionDate = LocalDateTime.now();
+    }
 }
