@@ -1,6 +1,7 @@
 package mk.ukim.finki.finance.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,12 +28,12 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "account_id")
-    @JsonBackReference
+    @JsonManagedReference
     private Account account;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonBackReference
+    @JsonManagedReference
     private Category category;
 
     @ManyToOne

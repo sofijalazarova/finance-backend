@@ -39,7 +39,7 @@ public class Account {
     private User user;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonBackReference
     private List<Transaction> transactions;
 
     public Account(String name, BigDecimal balance, AccountType type) {

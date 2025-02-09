@@ -12,6 +12,8 @@ import mk.ukim.finki.finance.service.TransactionService;
 import mk.ukim.finki.finance.user.User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
@@ -19,6 +21,11 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
     private final AccountRepository accountRepository;
+
+    @Override
+    public List<Transaction> findByUser(User user) {
+        return this.transactionRepository.findAllByUser(user);
+    }
 
     @Override
     public Transaction save(TransactionDto transactionDto, User user) {

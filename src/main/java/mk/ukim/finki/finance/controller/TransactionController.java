@@ -9,12 +9,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/transaction")
 @AllArgsConstructor
 public class TransactionController {
 
     private final TransactionService transactionService;
+
+    @GetMapping
+    public ResponseEntity<List<Transaction>> getTransactions(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(this.transactionService.findByUser(user));
+    }
 
     @PostMapping("add")
     public ResponseEntity<Transaction> addTransaction(@RequestBody TransactionDto transactionDto, @AuthenticationPrincipal User user) {
