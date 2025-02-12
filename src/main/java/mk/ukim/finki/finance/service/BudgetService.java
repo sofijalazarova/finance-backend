@@ -13,4 +13,6 @@ public interface BudgetService {
     Budget getOrCreateBudget(User user);
 
     Budget updateBudget(BigDecimal amount, User user);
+
+    void allocateToCategory(Long budgetId, Long categoryId, BigDecimal amount);
 }

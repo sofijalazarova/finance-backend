@@ -2,6 +2,7 @@ package mk.ukim.finki.finance.model;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class CategoryBudget {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonBackReference
+    @JsonManagedReference
     private Category category;
 
     private BigDecimal allocatedAmount;
@@ -35,4 +36,12 @@ public class CategoryBudget {
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+
+    public void allocateAmount(BigDecimal amount) {
+        if(amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Amount must be greater than zero");
+        }
+        this.allocatedAmount = amount;
+    }
 }

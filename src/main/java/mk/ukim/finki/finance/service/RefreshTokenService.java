@@ -28,10 +28,9 @@ public class RefreshTokenService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // Проверка дали корисникот веќе има refresh token
+
         Optional<RefreshToken> existingToken = refreshTokenRepository.findByUser(user);
         if (existingToken.isPresent()) {
-            // Ако постои, ажурирај го со нов токен и expiry date
             RefreshToken refreshToken = existingToken.get();
             refreshToken.setToken(UUID.randomUUID().toString());
             refreshToken.setExpiryDate(Instant.now().plus(7, ChronoUnit.DAYS));
@@ -42,7 +41,7 @@ public class RefreshTokenService {
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(userRepository.findByEmail(email).orElseThrow())
                 .token(UUID.randomUUID().toString())
-                .expiryDate(Instant.now().plusMillis(600000))
+                .expiryDate(Instant.now().plus(7, ChronoUnit.DAYS))
                 .build();
         return refreshTokenRepository.save(refreshToken);
     }

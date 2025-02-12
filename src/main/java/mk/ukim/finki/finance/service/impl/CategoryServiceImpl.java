@@ -8,6 +8,7 @@ import mk.ukim.finki.finance.service.CategoryService;
 import mk.ukim.finki.finance.user.User;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +32,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         return Optional.of(this.categoryRepository.save(category));
     }
+
+
 }
