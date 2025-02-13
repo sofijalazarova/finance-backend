@@ -44,4 +44,14 @@ public class AccountServiceImpl implements AccountService {
         account.setUser(user);
         return Optional.of(this.accountRepository.save(account));
     }
+
+    @Override
+    public Optional<Account> edit(Long id, AccountDto accountDto, User user) {
+        Account account = this.accountRepository.findById(id).orElseThrow();
+        account.setName(accountDto.getName());
+        account.setBalance(accountDto.getBalance());
+        account.setType(accountDto.getType());
+        account.setUser(user);
+        return Optional.of(this.accountRepository.save(account));
+    }
 }

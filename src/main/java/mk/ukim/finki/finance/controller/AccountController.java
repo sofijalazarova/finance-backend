@@ -44,6 +44,16 @@ public class AccountController {
         }catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
+    @PutMapping("edit/{id}")
+    public ResponseEntity<Account> editAccount(@AuthenticationPrincipal User user, @PathVariable Long id, @RequestBody AccountDto accountDto){
+        try {
+            return this.accountService.edit(id, accountDto, user)
+                    .map(account -> ResponseEntity.ok().body(account))
+                    .orElseGet(() -> ResponseEntity.badRequest().build());
+        }catch (Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

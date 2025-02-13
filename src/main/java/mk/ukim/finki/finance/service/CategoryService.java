@@ -11,4 +11,5 @@ public interface CategoryService {
 
     List<Category> findAllByUser(User user);
     Optional<Category> save(CategoryDto categoryDto, User user);
+    Optional<Category> edit(Long id, CategoryDto categoryDto, User user);
 }

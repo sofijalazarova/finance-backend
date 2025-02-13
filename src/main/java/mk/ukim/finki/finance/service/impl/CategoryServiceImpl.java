@@ -1,5 +1,6 @@
 package mk.ukim.finki.finance.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.finance.model.Category;
 import mk.ukim.finki.finance.model.dto.CategoryDto;
@@ -33,5 +34,12 @@ public class CategoryServiceImpl implements CategoryService {
         return Optional.of(this.categoryRepository.save(category));
     }
 
-
+    @Override
+    public Optional<Category> edit(Long id, CategoryDto categoryDto, User user) {
+        Category category = this.categoryRepository.findById(id).orElseThrow();
+        category.setName(categoryDto.getName());
+        category.setEmoji(categoryDto.getEmoji());
+        category.setUser(user);
+        return Optional.of(this.categoryRepository.save(category));
+    }
 }

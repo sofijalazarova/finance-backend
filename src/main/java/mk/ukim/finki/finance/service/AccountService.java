@@ -13,4 +13,5 @@ public interface AccountService {
     Optional<Account> findById(Long id);
     List<Account> findAllByUserId(Long id);
     Optional<Account> save(AccountDto accountDto, User user);
+    Optional<Account> edit(Long id, AccountDto accountDto, User user);
 }

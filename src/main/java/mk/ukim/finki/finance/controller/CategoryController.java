@@ -34,4 +34,15 @@ public class CategoryController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PutMapping("edit/{id}")
+    public ResponseEntity<Category> edit(@AuthenticationPrincipal User user, @PathVariable Long id, @RequestBody CategoryDto categoryDto) {
+        try {
+            return this.categoryService.edit(id,categoryDto, user)
+                    .map(account -> ResponseEntity.ok().body(account))
+                    .orElseGet(() -> ResponseEntity.badRequest().build());
+        }catch (Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
