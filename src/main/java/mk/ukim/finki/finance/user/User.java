@@ -14,7 +14,9 @@ import mk.ukim.finki.finance.model.Transaction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -38,6 +40,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @JsonManagedReference
+    @JsonIgnore
+    private List<UserConnectedAccount> connectedAccounts = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     @JsonIgnore
@@ -58,10 +65,30 @@ public class User implements UserDetails {
     @JsonIgnore
     private List<Budget> montlyBudgets;
 
+    public void addConnectedAccount(UserConnectedAccount connectedAccount) {
+        connectedAccounts.add(connectedAccount);
+    }
+
+    public User(OAuth2User oAuth2User) {
+
+        System.out.println(oAuth2User.getAttributes());
+        this.email = oAuth2User.getAttribute("email");
+        String name = oAuth2User.getAttribute("name");
+        if(name != null) {
+            List<String> names = List.of(name.split(" "));
+            if(names.size() > 1) {
+                this.firstName = names.get(0);
+                this.lastName = names.get(1);
+            }else {
+                this.firstName = names.get(0);
+            }
+        }
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        //return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

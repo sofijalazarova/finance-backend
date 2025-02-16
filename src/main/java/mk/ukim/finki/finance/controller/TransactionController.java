@@ -32,4 +32,10 @@ public class TransactionController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<String> deleteTransaction(@AuthenticationPrincipal User user, @PathVariable Long id) {
+        this.transactionService.delete(id, user);
+        return ResponseEntity.ok("Deleted");
+    }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface TransactionService {
 
-    public List<Transaction> findByUser(User user);
-    public Transaction save(TransactionDto transactionDto, User user);
+    List<Transaction> findByUser(User user);
+    Transaction save(TransactionDto transactionDto, User user);
+    void delete(Long transactionId, User user);
 }

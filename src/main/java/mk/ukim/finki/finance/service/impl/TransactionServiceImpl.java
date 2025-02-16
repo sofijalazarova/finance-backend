@@ -52,4 +52,11 @@ public class TransactionServiceImpl implements TransactionService {
         accountRepository.save(account);
         return this.transactionRepository.save(transaction);
     }
+
+    @Override
+    public void delete(Long transactionId, User user) {
+
+        this.transactionRepository.deleteById(transactionId);
+
+    }
 }

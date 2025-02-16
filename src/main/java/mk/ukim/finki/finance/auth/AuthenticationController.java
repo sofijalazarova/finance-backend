@@ -1,5 +1,6 @@
 package mk.ukim.finki.finance.auth;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.finance.repository.UserRepository;
 import mk.ukim.finki.finance.service.RefreshTokenService;
@@ -32,16 +33,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(this.authenticationService.register(registerRequest));
     }
 
-//    @PostMapping("authenticate")
-//    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest){
-//        AuthenticationResponse authenticationResponse = this.authenticationService.authenticate(authenticationRequest);
-//        if(authenticationResponse != null){
-//            return ResponseEntity.ok(authenticationResponse);
-//        }else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-//    }
-
     @PostMapping("login")
     public JwtResponseDto AuthenticateAndGetToken(@RequestBody AuthenticationRequest authenticationRequest){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
@@ -57,6 +48,23 @@ public class AuthenticationController {
             throw new UsernameNotFoundException("invalid user request..!!");
         }
     }
+
+//    @GetMapping("google")
+//    public JwtResponseDto googleLoginSuccess(HttpServletRequest request){
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        if(authentication == null || !authentication.isAuthenticated()){
+//            throw new UsernameNotFoundException("invalid user request..!!");
+//        }
+//
+//        User user = new User(authentication.getPrincipal());
+//        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
+//
+//        return JwtResponseDto.builder()
+//                .accessToken(jtwService.generateToken(user))
+//                .refreshToken(refreshToken.getToken())
+//                .build();
+//    }
 
     @PostMapping("refreshToken")
     public JwtResponseDto refreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO){
