@@ -52,23 +52,24 @@ public class BudgetServiceImpl implements BudgetService {
         Budget budget = this.budgetRepository.findById(budgetId).orElseThrow(() -> new IllegalArgumentException("Budget not found"));
         Category category = this.categoryRepository.findById(categoryId).orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
-        if(amount.compareTo(budget.getTotalBudget()) > 0){
-            throw new IllegalArgumentException("Not enough budget available for allocating to category");
-        }
-
-        BigDecimal availableAmount = budget.getTotalBudget().subtract(amount);
-        budget.setTotalBudget(availableAmount);
-
         CategoryBudget categoryBudget = this.categoryBudgetRepository.findByBudgetAndCategory(budget, category);
-        if(categoryBudget == null) {
+
+        if(categoryBudget != null) {
+            budget.setTotalBudget(budget.getTotalBudget().subtract(amount.subtract(categoryBudget.getAllocatedAmount())));
+            categoryBudget.setAllocatedAmount(amount);
+        }else {
             categoryBudget = new CategoryBudget();
+
+            if(amount.compareTo(budget.getTotalBudget()) > 0) {
+                throw new IllegalArgumentException("Not enough budget");
+            }
+            categoryBudget.setAllocatedAmount(amount);
             categoryBudget.setBudget(budget);
             categoryBudget.setCategory(category);
-            categoryBudget.allocateAmount(amount);
-        }else {
-            //categoryBudget.setAllocatedAmount(amount);
-            categoryBudget.setAllocatedAmount(categoryBudget.getAllocatedAmount().add(amount));
+            budget.setTotalBudget(budget.getTotalBudget().subtract(amount));
+            //this.categoryBudgetRepository.save(categoryBudget);
         }
+
 
         categoryBudgetRepository.save(categoryBudget);
         budgetRepository.save(budget);

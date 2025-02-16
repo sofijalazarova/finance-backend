@@ -11,4 +11,5 @@ public interface CategoryBudgetRepository extends JpaRepository<CategoryBudget, 
 
     CategoryBudget findByBudgetAndCategory(Budget budget, Category category);
 
+    CategoryBudget findByCategory(Category category);
 }
