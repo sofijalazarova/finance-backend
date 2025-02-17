@@ -11,6 +11,7 @@ import mk.ukim.finki.finance.service.TransactionService;
 import mk.ukim.finki.finance.user.User;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -34,6 +35,7 @@ public class TransactionServiceImpl implements TransactionService {
         Account account = this.accountRepository.findById(transactionDto.getAccount_id()).orElseThrow();
         CategoryBudget categoryBudget = this.categoryBudgetRepository.findByCategory(category);
 
+
         if(transactionDto.getType() == TransactionType.EXPENSE && account.getBalance().compareTo(transactionDto.getAmount()) < 0) {
             throw new RuntimeException("Expense account balance is too small");
         }
@@ -45,14 +47,23 @@ public class TransactionServiceImpl implements TransactionService {
 
         if(transactionDto.getType() == TransactionType.EXPENSE) {
             account.setBalance(account.getBalance().subtract(transactionDto.getAmount()));
-            categoryBudget.setAllocatedAmount(categoryBudget.getAllocatedAmount().subtract(transactionDto.getAmount()));
+            //categoryBudget.setAllocatedAmount(categoryBudget.getAllocatedAmount().subtract(transactionDto.getAmount()));
+
         }else if(transactionDto.getType() == TransactionType.INCOME) {
             account.setBalance(account.getBalance().add(transactionDto.getAmount()));
         }
 
         accountRepository.save(account);
+        Transaction savedTransaction = transactionRepository.save(transaction);
+        BigDecimal totalSpent = transactionRepository.getTotalSpentByCategory(category);
+        System.out.println(totalSpent);
+
+        categoryBudget.setAvailableAmount(categoryBudget.getAllocatedAmount().subtract(totalSpent));
+        categoryBudget.setTotalSpent(totalSpent);
         categoryBudgetRepository.save(categoryBudget);
-        return this.transactionRepository.save(transaction);
+
+        System.out.println(categoryBudget.getAvailableAmount());
+        return savedTransaction;
     }
 
     @Override

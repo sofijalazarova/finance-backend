@@ -63,11 +63,11 @@ public class BudgetServiceImpl implements BudgetService {
             if(amount.compareTo(budget.getTotalBudget()) > 0) {
                 throw new IllegalArgumentException("Not enough budget");
             }
+
             categoryBudget.setAllocatedAmount(amount);
             categoryBudget.setBudget(budget);
             categoryBudget.setCategory(category);
             budget.setTotalBudget(budget.getTotalBudget().subtract(amount));
-            //this.categoryBudgetRepository.save(categoryBudget);
         }
 
 

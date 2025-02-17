@@ -31,7 +31,8 @@ public class CategoryBudget {
     private Category category;
 
     private BigDecimal allocatedAmount;
-    private BigDecimal spentAmount;
+    private BigDecimal totalSpent;
+    private BigDecimal availableAmount;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
