@@ -7,10 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import mk.ukim.finki.finance.model.Account;
-import mk.ukim.finki.finance.model.Budget;
-import mk.ukim.finki.finance.model.Category;
-import mk.ukim.finki.finance.model.Transaction;
+import mk.ukim.finki.finance.model.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -59,6 +56,11 @@ public class User implements UserDetails {
     @JsonManagedReference
     @JsonIgnore
     private List<Transaction> transactions;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @JsonIgnore
+    private List<SavingGoal> savingGoals;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference

@@ -57,6 +57,7 @@ public class BudgetServiceImpl implements BudgetService {
         if(categoryBudget != null) {
             budget.setTotalBudget(budget.getTotalBudget().subtract(amount.subtract(categoryBudget.getAllocatedAmount())));
             categoryBudget.setAllocatedAmount(amount);
+
         }else {
             categoryBudget = new CategoryBudget();
 
@@ -70,8 +71,10 @@ public class BudgetServiceImpl implements BudgetService {
             budget.setTotalBudget(budget.getTotalBudget().subtract(amount));
         }
 
-
         categoryBudgetRepository.save(categoryBudget);
         budgetRepository.save(budget);
     }
+
+
+
 }
