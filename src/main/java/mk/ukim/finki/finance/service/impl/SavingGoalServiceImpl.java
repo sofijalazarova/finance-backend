@@ -20,7 +20,8 @@ public class SavingGoalServiceImpl implements SavingGoalService {
 
     @Override
     public List<SavingGoal> getUserSavingGoals(User user) {
-        return this.savingGoalRepository.findByUser(user);
+//        return this.savingGoalRepository.findByUser(user);
+        return this.savingGoalRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
     @Override
@@ -40,5 +41,10 @@ public class SavingGoalServiceImpl implements SavingGoalService {
         SavingGoal savingGoal = savingGoalRepository.findById(goalId).orElseThrow();
         savingGoal.setSavedAmount(savingGoal.getSavedAmount().add(amount));
         return savingGoalRepository.save(savingGoal);
+    }
+
+    @Override
+    public void deleteSavingGoal(Long goalId, User user) {
+        this.savingGoalRepository.deleteById(goalId);
     }
 }

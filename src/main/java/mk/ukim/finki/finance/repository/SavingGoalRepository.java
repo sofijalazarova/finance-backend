@@ -9,4 +9,7 @@ import java.util.List;
 public interface SavingGoalRepository extends JpaRepository<SavingGoal, Long> {
 
     List<SavingGoal> findByUser(User user);
+
+    List<SavingGoal> findByUserOrderByCreatedAtDesc(User user);
+
 }

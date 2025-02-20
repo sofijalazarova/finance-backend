@@ -33,4 +33,10 @@ public class SavingGoalController {
     public ResponseEntity<SavingGoal> updateSavedAmount(@PathVariable Long goalId, @RequestParam BigDecimal amount, @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(savingGoalService.updateSavedAmount(goalId, amount));
     }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<String> deleteSavingGoal(@AuthenticationPrincipal User user, @PathVariable Long id) {
+        this.savingGoalService.deleteSavingGoal(id, user);
+        return ResponseEntity.ok("Deleted");
+    }
 }

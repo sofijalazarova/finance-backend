@@ -12,4 +12,5 @@ public interface SavingGoalService {
     List<SavingGoal> getUserSavingGoals(User user);
     SavingGoal createSavingGoal(SavingGoalDto savingGoalDto, User user);
     SavingGoal updateSavedAmount(Long goalId, BigDecimal amount);
+    void deleteSavingGoal(Long goalId, User user);
 }
