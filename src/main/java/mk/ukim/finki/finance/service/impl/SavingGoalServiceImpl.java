@@ -20,7 +20,6 @@ public class SavingGoalServiceImpl implements SavingGoalService {
 
     @Override
     public List<SavingGoal> getUserSavingGoals(User user) {
-//        return this.savingGoalRepository.findByUser(user);
         return this.savingGoalRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
