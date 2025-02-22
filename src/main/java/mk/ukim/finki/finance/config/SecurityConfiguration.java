@@ -31,9 +31,9 @@ public class SecurityConfiguration {
                     .anyRequest().authenticated();
         });
 
-        http.oauth2Login(customizer -> {
-            customizer.successHandler(oauth2LoginSuccessHandler);
-        });
+//        http.oauth2Login(customizer -> {
+//            customizer.successHandler(oauth2LoginSuccessHandler);
+//        });
 
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

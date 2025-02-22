@@ -57,15 +57,17 @@ public class BudgetServiceImpl implements BudgetService {
         if(categoryBudget != null) {
             budget.setTotalBudget(budget.getTotalBudget().subtract(amount.subtract(categoryBudget.getAllocatedAmount())));
             categoryBudget.setAllocatedAmount(amount);
+            categoryBudget.setAvailableAmount(amount.subtract(categoryBudget.getTotalSpent()));
 
         }else {
             categoryBudget = new CategoryBudget();
 
-            if(amount.compareTo(budget.getTotalBudget()) > 0) {
-                throw new IllegalArgumentException("Not enough budget");
-            }
+//            if(amount.compareTo(budget.getTotalBudget()) > 0) {
+//                throw new IllegalArgumentException("Not enough budget");
+//            }
 
             categoryBudget.setAllocatedAmount(amount);
+            categoryBudget.setAvailableAmount(amount.subtract(categoryBudget.getTotalSpent()));
             categoryBudget.setBudget(budget);
             categoryBudget.setCategory(category);
             budget.setTotalBudget(budget.getTotalBudget().subtract(amount));

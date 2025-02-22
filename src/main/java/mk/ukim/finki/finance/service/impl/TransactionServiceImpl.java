@@ -31,7 +31,14 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Transaction save(TransactionDto transactionDto, User user) {
 
-        Category category = this.categoryRepository.findById(transactionDto.getCategory_id()).orElseThrow();
+        //Category category = this.categoryRepository.findById(transactionDto.getCategory_id()).orElseThrow();
+
+        Category category = null;
+
+        if(transactionDto.getCategory_id() != null) {
+            category = categoryRepository.findById(transactionDto.getCategory_id()).orElseThrow();
+        }
+
         Account account = this.accountRepository.findById(transactionDto.getAccount_id()).orElseThrow();
         CategoryBudget categoryBudget = this.categoryBudgetRepository.findByCategory(category);
 
