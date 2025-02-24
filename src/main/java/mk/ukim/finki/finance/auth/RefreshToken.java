@@ -22,7 +22,7 @@ public class RefreshToken {
 
     private String token;
     private Instant expiryDate;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 }
