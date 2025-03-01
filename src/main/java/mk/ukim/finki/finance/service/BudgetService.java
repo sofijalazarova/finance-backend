@@ -15,4 +15,6 @@ public interface BudgetService {
     Budget updateBudget(BigDecimal amount, User user);
 
     void allocateToCategory(Long budgetId, Long categoryId, BigDecimal amount);
+
+    public BigDecimal getBudgetChangePercentage(User user);
 }

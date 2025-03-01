@@ -46,7 +46,7 @@ public class JwtService {
     }
 
     public String generateAccessToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, 1000 * 60 * 15); // Access токен: 2 минути
+        return generateToken(new HashMap<>(), userDetails, 1000 * 60 * 30); // Access токен: 2 минути
     }
 
     public String generateRefreshToken(UserDetails userDetails){

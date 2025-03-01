@@ -24,6 +24,8 @@ public class Budget {
 
     private BigDecimal totalBudget;
 
+    private BigDecimal totalSetBudget = BigDecimal.ZERO;
+
     private LocalDate startDate;
 
     @ManyToOne

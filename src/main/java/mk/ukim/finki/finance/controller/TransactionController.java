@@ -26,7 +26,6 @@ public class TransactionController {
     @PostMapping("add")
     public ResponseEntity<Transaction> addTransaction(@RequestBody TransactionDto transactionDto, @AuthenticationPrincipal User user) {
         try{
-            System.out.println(transactionDto.toString());
             return ResponseEntity.ok(this.transactionService.save(transactionDto, user));
         }catch (Exception e) {
             return ResponseEntity.badRequest().build();

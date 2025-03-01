@@ -1,8 +1,5 @@
 package mk.ukim.finki.finance.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.finance.repository.UserRepository;
 import mk.ukim.finki.finance.service.RefreshTokenService;
@@ -15,11 +12,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -49,7 +45,7 @@ public class AuthenticationController {
     public JwtResponseDto AuthenticateAndGetToken(@RequestBody AuthenticationRequest authenticationRequest){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         if(authentication.isAuthenticated()){
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(authenticationRequest.getEmail());
+            //RefreshToken refreshToken = refreshTokenService.createRefreshToken(authenticationRequest.getEmail());
             var user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow();
             return JwtResponseDto.builder()
                     .accessToken(jwtService.generateAccessToken(user))

@@ -12,6 +12,7 @@ import mk.ukim.finki.finance.user.User;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -43,7 +44,11 @@ public class BudgetServiceImpl implements BudgetService {
     @Override
     public Budget updateBudget(BigDecimal amount, User user) {
         Budget budget = getOrCreateBudget(user);
+        BigDecimal oldBudget = budget.getTotalBudget();
         budget.setTotalBudget(amount);
+        BigDecimal difference = amount.subtract(oldBudget);
+        budget.setTotalSetBudget(budget.getTotalSetBudget().add(difference));
+
         return this.budgetRepository.save(budget);
     }
 
@@ -77,6 +82,24 @@ public class BudgetServiceImpl implements BudgetService {
         budgetRepository.save(budget);
     }
 
+    @Override
+    public BigDecimal getBudgetChangePercentage(User user) {
+
+        Budget currentBudget = getOrCreateBudget(user);
+        BigDecimal currentMonthBudget = currentBudget.getTotalSetBudget();
+
+        LocalDate previousMonthStart = currentBudget.getStartDate().minusMonths(1);
+        Budget previousBudget = this.budgetRepository.findByStartDateAndUser(previousMonthStart, user).orElseThrow();
+
+        if(previousBudget.getTotalSetBudget().compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal previousMonthBudget = previousBudget.getTotalSetBudget();
+        BigDecimal difference = currentMonthBudget.subtract(previousMonthBudget);
+
+        return difference.divide(previousMonthBudget, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+    }
 
 
 }
