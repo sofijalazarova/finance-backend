@@ -42,4 +42,18 @@ public class CategoryServiceImpl implements CategoryService {
         category.setUser(user);
         return Optional.of(this.categoryRepository.save(category));
     }
+
+    @Override
+    public void archive(Long id) {
+        Category category = this.categoryRepository.findById(id).orElseThrow();
+        category.setIsArchived(true);
+        this.categoryRepository.save(category);
+    }
+
+    @Override
+    public void restore(Long id) {
+        Category category = this.categoryRepository.findById(id).orElseThrow();
+        category.setIsArchived(false);
+        this.categoryRepository.save(category);
+    }
 }

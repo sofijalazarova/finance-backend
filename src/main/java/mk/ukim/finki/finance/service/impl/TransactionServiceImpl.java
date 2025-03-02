@@ -1,5 +1,6 @@
 package mk.ukim.finki.finance.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.finance.model.*;
 import mk.ukim.finki.finance.model.dto.TransactionDto;
@@ -28,10 +29,9 @@ public class TransactionServiceImpl implements TransactionService {
         return this.transactionRepository.findAllByUser(user);
     }
 
+    @Transactional
     @Override
     public Transaction save(TransactionDto transactionDto, User user) {
-
-        //Category category = this.categoryRepository.findById(transactionDto.getCategory_id()).orElseThrow();
 
         Category category = null;
 
@@ -54,7 +54,6 @@ public class TransactionServiceImpl implements TransactionService {
 
         if(transactionDto.getType() == TransactionType.EXPENSE) {
             account.setBalance(account.getBalance().subtract(transactionDto.getAmount()));
-            //categoryBudget.setAllocatedAmount(categoryBudget.getAllocatedAmount().subtract(transactionDto.getAmount()));
 
         }else if(transactionDto.getType() == TransactionType.INCOME) {
             account.setBalance(account.getBalance().add(transactionDto.getAmount()));

@@ -49,8 +49,4 @@ public class AuthenticationService {
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
-    public User getCurrentUser(){
-        return userRepository.findByEmail("test@mail.com").orElseThrow();
-    }
-
 }

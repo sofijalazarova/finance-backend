@@ -1,6 +1,7 @@
 package mk.ukim.finki.finance.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,13 +34,15 @@ public class Account {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+    //@JsonBackReference
+    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    //@JsonBackReference
+    @JsonIgnore
     private List<Transaction> transactions;
 
     public Account(String name, BigDecimal balance, AccountType type) {

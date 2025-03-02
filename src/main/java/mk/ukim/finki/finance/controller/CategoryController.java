@@ -45,4 +45,16 @@ public class CategoryController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PutMapping("/{id}/archive")
+    public ResponseEntity<String> archive(@PathVariable Long id){
+        this.categoryService.archive(id);
+        return ResponseEntity.ok("Archived");
+    }
+
+    @PutMapping("/{id}/restore")
+    public ResponseEntity<String> restore(@PathVariable Long id){
+        this.categoryService.restore(id);
+        return ResponseEntity.ok("Restored");
+    }
 }
