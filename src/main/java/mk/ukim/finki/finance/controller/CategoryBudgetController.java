@@ -25,12 +25,4 @@ public class CategoryBudgetController {
     public ResponseEntity<List<CategoryBudget>> findAll(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(this.categoryBudgetRepository.findAll());
     }
-
-//    @PostMapping("/allocate")
-//    public ResponseEntity<String> allocateToCategory(@AuthenticationPrincipal User user, @RequestBody AssignBudgetRequest request){
-//
-//        this.budgetService.assignToCategory(request.getBudgetId(), request.getCategoryId(), request.getAmount());
-//        return ResponseEntity.ok("Budget allocated");
-//
-//    }
 }
