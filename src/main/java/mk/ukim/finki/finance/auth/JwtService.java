@@ -50,7 +50,7 @@ public class JwtService {
     }
 
     public String generateRefreshToken(UserDetails userDetails){
-        return generateToken(new HashMap<>(), userDetails, 1000 * 60 * 60 * 24 * 7);
+        return generateToken(new HashMap<>(), userDetails, 1000 * 60 * 60 * 60);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails){

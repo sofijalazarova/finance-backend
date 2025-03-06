@@ -10,11 +10,13 @@ public interface BudgetService {
 
     Optional<Budget> findByMonth(Integer month);
 
-    Budget getOrCreateBudget(User user);
+    //Budget getOrCreateBudget(User user);
+    Optional<Budget> getBudget(User user);
+    Budget createBudget(User user);
 
     Budget updateBudget(BigDecimal amount, User user);
 
-    void allocateToCategory(Long budgetId, Long categoryId, BigDecimal amount);
+    void assignToCategory(Long budgetId, Long categoryId, BigDecimal amount);
 
-    public BigDecimal getBudgetChangePercentage(User user);
+    BigDecimal getBudgetChangePercentage(User user);
 }

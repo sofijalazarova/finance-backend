@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,9 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final JwtService jtwService;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
-    public AuthenticationResponse register(RegisterRequest request){
+    public void register(RegisterRequest request){
 
         var user = User.builder()
                 .firstName(request.getFirstName())
@@ -34,7 +36,6 @@ public class AuthenticationService {
 
         userRepository.save(user);
         var jwtToken = jtwService.generateAccessToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
 
     }
 
@@ -44,9 +45,9 @@ public class AuthenticationService {
                 request.getPassword()
         ));
 
-        var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        var user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         var jwtToken = jtwService.generateAccessToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        var refreshToken = jtwService.generateRefreshToken(user);
+        return AuthenticationResponse.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
     }
-
 }

@@ -1,11 +1,14 @@
 package mk.ukim.finki.finance.auth;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.finance.repository.UserRepository;
 import mk.ukim.finki.finance.service.RefreshTokenService;
 import mk.ukim.finki.finance.user.User;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,38 +35,122 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
-    private final UserRepository userRepository;
 
     private final UserDetailsService userDetailsService;
 
 
     @PostMapping("register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest registerRequest){
-        return ResponseEntity.ok(this.authenticationService.register(registerRequest));
+    public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest){
+        this.authenticationService.register(registerRequest);
+        return ResponseEntity.ok("User registered successfully");
     }
+
+//    @PostMapping("login")
+//    public JwtResponseDto AuthenticateAndGetToken(@RequestBody AuthenticationRequest authenticationRequest){
+//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
+//        if(authentication.isAuthenticated()){
+//            //RefreshToken refreshToken = refreshTokenService.createRefreshToken(authenticationRequest.getEmail());
+//            var user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow();
+//            return JwtResponseDto.builder()
+//                    .accessToken(jwtService.generateAccessToken(user))
+//                    .refreshToken(jwtService.generateRefreshToken(user))
+//                    .build();
+//
+//        } else {
+//            throw new UsernameNotFoundException("invalid user request..!!");
+//        }
+//    }
+
+
+//    @PostMapping("login")
+//    public ResponseEntity<JwtResponseDto> AuthenticateAndGetToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) {
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
+//        );
+//
+//        if (authentication.isAuthenticated()) {
+//            var user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow();
+//            String accessToken = jwtService.generateAccessToken(user);
+//            String refreshToken = jwtService.generateRefreshToken(user);
+//
+//
+//            ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
+//                    .httpOnly(true)
+//                    .secure(true)
+//                    .path("/api/auth/refresh")
+//                    .maxAge(Duration.ofDays(7))
+//                    .sameSite("Strict")
+//                    .build();
+//
+//            response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+//
+//            return ResponseEntity.ok(JwtResponseDto.builder()
+//                    .accessToken(accessToken)
+//                    .build());
+//        } else {
+//            throw new UsernameNotFoundException("Invalid user request..!!");
+//        }
+//    }
+
 
     @PostMapping("login")
-    public JwtResponseDto AuthenticateAndGetToken(@RequestBody AuthenticationRequest authenticationRequest){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
-        if(authentication.isAuthenticated()){
-            //RefreshToken refreshToken = refreshTokenService.createRefreshToken(authenticationRequest.getEmail());
-            var user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow();
-            return JwtResponseDto.builder()
-                    .accessToken(jwtService.generateAccessToken(user))
-                    .refreshToken(jwtService.generateRefreshToken(user))
+    public ResponseEntity<AuthenticationResponse> AuthenticateAndGetToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) {
+
+        AuthenticationResponse authenticationResponse = this.authenticationService.authenticate(authenticationRequest);
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", authenticationResponse.getRefreshToken())
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/api/auth/refresh")
+                    .maxAge(Duration.ofDays(7))
+                    .sameSite("Strict")
                     .build();
 
-        } else {
-            throw new UsernameNotFoundException("invalid user request..!!");
-        }
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        return ResponseEntity.ok(authenticationResponse);
     }
+
+
+
+
+
+//    @PostMapping("/refresh")
+//    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request){
+//        System.out.println("Se povikuva");
+//
+//        String refreshToken = request.get("refreshToken");
+//
+//        if (refreshToken == null || refreshToken.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is missing.");
+//        }
+//
+//        try {
+//            String userEmail = jwtService.extractUsername(refreshToken);
+//
+//            if (userEmail != null) {
+//                UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+//
+//                if (jwtService.isTokenValid(refreshToken, userDetails)) {
+//                    String newAccessToken = jwtService.generateAccessToken(userDetails);
+//
+//                    Map<String, String> tokens = new HashMap<>();
+//                    tokens.put("accessToken", newAccessToken);
+//                    tokens.put("refreshToken", refreshToken);
+//
+//                    return ResponseEntity.ok(tokens);
+//                }
+//            }
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token.");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token refresh failed: " + e.getMessage());
+//        }
+//
+//    }
 
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request){
-        System.out.println("Se povikuva");
-
-        String refreshToken = request.get("refreshToken");
+    public ResponseEntity<?> refreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
 
         if (refreshToken == null || refreshToken.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is missing.");
@@ -79,7 +167,6 @@ public class AuthenticationController {
 
                     Map<String, String> tokens = new HashMap<>();
                     tokens.put("accessToken", newAccessToken);
-                    tokens.put("refreshToken", refreshToken);
 
                     return ResponseEntity.ok(tokens);
                 }
@@ -88,10 +175,7 @@ public class AuthenticationController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token refresh failed: " + e.getMessage());
         }
-
     }
-
-
 
 
 //    @GetMapping("google")
@@ -111,31 +195,42 @@ public class AuthenticationController {
 //                .build();
 //    }
 
-    @PostMapping("refreshToken")
-    public JwtResponseDto refreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO){
-        return refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken())
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
-                    String accessToken = jwtService.generateAccessToken(user);
-                    return JwtResponseDto.builder()
-                            .accessToken(accessToken)
-                            .refreshToken(refreshTokenRequestDTO.getRefreshToken()).build();
-                }).orElseThrow(() ->new RuntimeException("Refresh Token is not in DB..!!"));
-    }
+//    @PostMapping("refreshToken")
+//    public JwtResponseDto refreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO){
+//        return refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken())
+//                .map(refreshTokenService::verifyExpiration)
+//                .map(RefreshToken::getUser)
+//                .map(user -> {
+//                    String accessToken = jwtService.generateAccessToken(user);
+//                    return JwtResponseDto.builder()
+//                            .accessToken(accessToken)
+//                            .refreshToken(refreshTokenRequestDTO.getRefreshToken()).build();
+//                }).orElseThrow(() ->new RuntimeException("Refresh Token is not in DB..!!"));
+//    }
 
 
 
-
-
-
-
+//    @PostMapping("logout")
+//    public ResponseEntity<String> logout(@RequestBody RefreshTokenRequestDto request){
+//        this.refreshTokenService.invalidateRefreshToken(request.getRefreshToken());
+//        return ResponseEntity.ok("Refresh Token successfully deleted. Logged out successfully...");
+//    }
 
     @PostMapping("logout")
-    public ResponseEntity<String> logout(@RequestBody RefreshTokenRequestDto request){
-        this.refreshTokenService.invalidateRefreshToken(request.getRefreshToken());
-        return ResponseEntity.ok("Refresh Token successfully deleted. Logged out successfully...");
+    public ResponseEntity<String> logout(HttpServletResponse response) {
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/api/auth/refresh")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        return ResponseEntity.ok("Logged out successfully...");
     }
+
 
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal User user){

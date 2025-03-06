@@ -4,7 +4,7 @@ package mk.ukim.finki.finance.controller;
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.finance.model.Budget;
 import mk.ukim.finki.finance.model.CategoryBudget;
-import mk.ukim.finki.finance.model.dto.AllocateBudgetRequest;
+import mk.ukim.finki.finance.model.dto.AssignBudgetRequest;
 import mk.ukim.finki.finance.model.dto.BudgetUpdateRequest;
 import mk.ukim.finki.finance.repository.CategoryBudgetRepository;
 import mk.ukim.finki.finance.service.BudgetService;
@@ -34,7 +34,7 @@ public class BudgetController {
     @GetMapping("/current-month-budget")
     public ResponseEntity<Budget> getCurrentMonthBudget(@AuthenticationPrincipal User user) {
 
-        Budget budget =  this.budgetService.getOrCreateBudget(user);
+        Budget budget =  this.budgetService.getBudget(user).orElseThrow();
         return ResponseEntity.ok(budget);
     }
 
@@ -45,11 +45,11 @@ public class BudgetController {
     }
 
 
-    @PostMapping("/allocate")
-    public ResponseEntity<String> allocateToCategory(@AuthenticationPrincipal User user, @RequestBody AllocateBudgetRequest request) {
+    @PostMapping("/assign")
+    public ResponseEntity<String> assignToCategory(@AuthenticationPrincipal User user, @RequestBody AssignBudgetRequest request) {
 
-        this.budgetService.allocateToCategory(request.getBudgetId(), request.getCategoryId(), request.getAmount());
-        return ResponseEntity.ok("Allocated successfully");
+        this.budgetService.assignToCategory(request.getBudgetId(), request.getCategoryId(), request.getAmount());
+        return ResponseEntity.ok("Assigned successfully");
     }
 
     @GetMapping("/budgetPercentage")

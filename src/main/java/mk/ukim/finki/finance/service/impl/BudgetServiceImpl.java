@@ -30,20 +30,34 @@ public class BudgetServiceImpl implements BudgetService {
         return Optional.of(this.budgetRepository.findByStartDate(startOfMonth));
     }
 
+//    @Override
+//    public Budget getOrCreateBudget(User user) {
+//        LocalDate currentMonth = LocalDate.now().withDayOfMonth(1);
+//        return this.budgetRepository.findByStartDateAndUser(currentMonth, user)
+//                .orElseGet(() -> {
+//                    Budget budget = new Budget(currentMonth, BigDecimal.ZERO);
+//                    budget.setUser(user);
+//                    return budgetRepository.save(budget);
+//                });
+//    }
+
     @Override
-    public Budget getOrCreateBudget(User user) {
+    public Budget createBudget(User user) {
         LocalDate currentMonth = LocalDate.now().withDayOfMonth(1);
-        return this.budgetRepository.findByStartDateAndUser(currentMonth, user)
-                .orElseGet(() -> {
-                    Budget budget = new Budget(currentMonth, BigDecimal.ZERO);
-                    budget.setUser(user);
-                    return budgetRepository.save(budget);
-                });
+        Budget budget = new Budget(currentMonth, BigDecimal.ZERO);
+        budget.setUser(user);
+        return budgetRepository.save(budget);
+    }
+
+    @Override
+    public Optional<Budget> getBudget(User user) {
+        LocalDate currentMonth = LocalDate.now().withDayOfMonth(1);
+        return this.budgetRepository.findByStartDateAndUser(currentMonth, user);
     }
 
     @Override
     public Budget updateBudget(BigDecimal amount, User user) {
-        Budget budget = getOrCreateBudget(user);
+        Budget budget = this.budgetRepository.findByStartDateAndUser(LocalDate.now().withDayOfMonth(1), user).orElseThrow();
         BigDecimal oldBudget = budget.getTotalBudget();
         budget.setTotalBudget(amount);
         BigDecimal difference = amount.subtract(oldBudget);
@@ -53,7 +67,7 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
-    public void allocateToCategory(Long budgetId, Long categoryId, BigDecimal amount) {
+    public void assignToCategory(Long budgetId, Long categoryId, BigDecimal amount) {
         Budget budget = this.budgetRepository.findById(budgetId).orElseThrow(() -> new IllegalArgumentException("Budget not found"));
         Category category = this.categoryRepository.findById(categoryId).orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
@@ -85,7 +99,7 @@ public class BudgetServiceImpl implements BudgetService {
     @Override
     public BigDecimal getBudgetChangePercentage(User user) {
 
-        Budget currentBudget = getOrCreateBudget(user);
+        Budget currentBudget = this.budgetRepository.findByStartDateAndUser(LocalDate.now().withDayOfMonth(1), user).orElseThrow();
         BigDecimal currentMonthBudget = currentBudget.getTotalSetBudget();
 
         LocalDate previousMonthStart = currentBudget.getStartDate().minusMonths(1);

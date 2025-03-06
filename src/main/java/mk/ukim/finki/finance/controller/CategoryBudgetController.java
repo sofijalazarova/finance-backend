@@ -3,10 +3,9 @@ package mk.ukim.finki.finance.controller;
 
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.finance.model.CategoryBudget;
-import mk.ukim.finki.finance.model.dto.AllocateBudgetRequest;
+import mk.ukim.finki.finance.model.dto.AssignBudgetRequest;
 import mk.ukim.finki.finance.repository.CategoryBudgetRepository;
 import mk.ukim.finki.finance.service.BudgetService;
-import mk.ukim.finki.finance.service.CategoryService;
 import mk.ukim.finki.finance.user.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,11 +26,11 @@ public class CategoryBudgetController {
         return ResponseEntity.ok(this.categoryBudgetRepository.findAll());
     }
 
-    @PostMapping("/allocate")
-    public ResponseEntity<String> allocateToCategory(@AuthenticationPrincipal User user, @RequestBody AllocateBudgetRequest request){
-
-        this.budgetService.allocateToCategory(request.getBudgetId(), request.getCategoryId(), request.getAmount());
-        return ResponseEntity.ok("Budget allocated");
-
-    }
+//    @PostMapping("/allocate")
+//    public ResponseEntity<String> allocateToCategory(@AuthenticationPrincipal User user, @RequestBody AssignBudgetRequest request){
+//
+//        this.budgetService.assignToCategory(request.getBudgetId(), request.getCategoryId(), request.getAmount());
+//        return ResponseEntity.ok("Budget allocated");
+//
+//    }
 }
