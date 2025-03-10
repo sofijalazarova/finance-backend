@@ -26,9 +26,9 @@ public class BudgetController {
 
     private final CategoryBudgetRepository categoryBudgetRepository;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<CategoryBudget>> findAll(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(this.categoryBudgetRepository.findAll());
+    @GetMapping("/byUser")
+    public ResponseEntity<List<CategoryBudget>> findAllByUser(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(this.categoryBudgetRepository.findAllByCategory_User(user));
     }
 
     @GetMapping("/current-month-budget")

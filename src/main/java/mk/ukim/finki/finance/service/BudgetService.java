@@ -10,7 +10,7 @@ public interface BudgetService {
 
     Optional<Budget> findByMonth(Integer month);
 
-    //Budget getOrCreateBudget(User user);
+    Budget getOrCreateBudget(User user);
     Optional<Budget> getBudget(User user);
     Budget createBudget(User user);
 

@@ -22,7 +22,7 @@ public class Budget {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private BigDecimal totalBudget;
+    private BigDecimal totalBudget = BigDecimal.ZERO;
 
     private BigDecimal totalSetBudget = BigDecimal.ZERO;
 

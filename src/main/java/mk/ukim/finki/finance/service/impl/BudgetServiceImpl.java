@@ -30,16 +30,16 @@ public class BudgetServiceImpl implements BudgetService {
         return Optional.of(this.budgetRepository.findByStartDate(startOfMonth));
     }
 
-//    @Override
-//    public Budget getOrCreateBudget(User user) {
-//        LocalDate currentMonth = LocalDate.now().withDayOfMonth(1);
-//        return this.budgetRepository.findByStartDateAndUser(currentMonth, user)
-//                .orElseGet(() -> {
-//                    Budget budget = new Budget(currentMonth, BigDecimal.ZERO);
-//                    budget.setUser(user);
-//                    return budgetRepository.save(budget);
-//                });
-//    }
+    @Override
+    public Budget getOrCreateBudget(User user) {
+        LocalDate currentMonth = LocalDate.now().withDayOfMonth(1);
+        return this.budgetRepository.findByStartDateAndUser(currentMonth, user)
+                .orElseGet(() -> {
+                    Budget budget = new Budget(currentMonth, BigDecimal.ZERO);
+                    budget.setUser(user);
+                    return budgetRepository.save(budget);
+                });
+    }
 
     @Override
     public Budget createBudget(User user) {
@@ -57,7 +57,7 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public Budget updateBudget(BigDecimal amount, User user) {
-        Budget budget = this.budgetRepository.findByStartDateAndUser(LocalDate.now().withDayOfMonth(1), user).orElseThrow();
+        Budget budget = getOrCreateBudget(user);
         BigDecimal oldBudget = budget.getTotalBudget();
         budget.setTotalBudget(amount);
         BigDecimal difference = amount.subtract(oldBudget);
