@@ -62,10 +62,15 @@ public class TransactionServiceImpl implements TransactionService {
         accountRepository.save(account);
         Transaction savedTransaction = transactionRepository.save(transaction);
         BigDecimal totalSpent = transactionRepository.getTotalSpentByCategory(category);
-        System.out.println(totalSpent);
 
-        categoryBudget.setAvailableAmount(categoryBudget.getAllocatedAmount().subtract(totalSpent));
-        categoryBudget.setTotalSpent(totalSpent);
+        if(transactionDto.getType() == TransactionType.EXPENSE) {
+            categoryBudget.setAvailableAmount(categoryBudget.getAllocatedAmount().subtract(totalSpent));
+            categoryBudget.setTotalSpent(totalSpent);
+        }else {
+            categoryBudget.setAllocatedAmount(categoryBudget.getAllocatedAmount().add(transactionDto.getAmount()));
+            categoryBudget.setAvailableAmount(categoryBudget.getAvailableAmount().add(transactionDto.getAmount()));
+        }
+
         categoryBudgetRepository.save(categoryBudget);
 
         System.out.println(categoryBudget.getAvailableAmount());
